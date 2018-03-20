@@ -5,10 +5,13 @@
 #include "GaudiAlg/GaudiTool.h"
 
 // FCCSW
-#include "DetSegmentation/FCCSWGridPhiEta.h"
+//#include "DetSegmentation/FCCSWGridPhiEta.h"
 #include "FWCore/DataHandle.h"
 #include "RecInterface/ITowerTool.h"
 class IGeoSvc;
+
+// DD4hep
+#include "DDSegmentation/GridPhiEta.h"
 
 // datamodel
 namespace fcc {
@@ -116,7 +119,7 @@ public:
    * (in [0, m_nPhiTower) range)
    */
   uint phiNeighbour(int aIPhi) const;
-  std::shared_ptr<dd4hep::DDSegmentation::BitField64> m_decoder;
+  std::shared_ptr<dd4hep::DDSegmentation::BitFieldCoder> m_decoder;
 
 private:
   /// Handle for calo cells (input collection)
@@ -126,7 +129,7 @@ private:
   /// Name of the detector readout
   Gaudi::Property<std::string> m_readoutName{this, "readoutName", "", "Name of the detector readout"};
   /// PhiEta segmentation (owned by DD4hep)
-  dd4hep::DDSegmentation::FCCSWGridPhiEta* m_segmentation;
+  dd4hep::DDSegmentation::GridPhiEta* m_segmentation;
   /// Radius used to calculate cluster position from eta and phi (in mm)
   Gaudi::Property<double> m_radius{this, "radiusForPosition", 1.0,
                                    "Radius used to calculate cluster position from eta and phi (in mm)"};

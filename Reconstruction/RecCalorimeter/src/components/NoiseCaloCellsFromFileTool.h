@@ -7,9 +7,12 @@
 class IRndmGenSvc;
 
 // FCCSW
-#include "DetSegmentation/FCCSWGridPhiEta.h"
+//#include "DetSegmentation/FCCSWGridPhiEta.h"
 #include "RecInterface/INoiseCaloCellsTool.h"
 class IGeoSvc;
+
+// DD4hep
+#include "DDSegmentation/GridPhiEta.h"
 
 // Root
 class TH1F;
@@ -81,7 +84,7 @@ private:
   /// Pointer to the geometry service
   SmartIF<IGeoSvc> m_geoSvc;
   /// PhiEta segmentation
-  dd4hep::DDSegmentation::FCCSWGridPhiEta* m_segmentation;
+  dd4hep::DDSegmentation::GridPhiEta* m_segmentation;
 };
 
 #endif /* RECCALORIMETER_NOISECALOCELLSFROMFILETOOL_H */

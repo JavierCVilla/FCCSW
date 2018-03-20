@@ -4,14 +4,15 @@
 gaudi_subdir(RecCalorimeter v1r0)
 
 # this declaration will not be needed in the future
-gaudi_depends_on_subdirs(GaudiAlg FWCore Detector/DetInterface Detector/DetSegmentation Detector/DetCommon Reconstruction/RecInterface)
+# gaudi_depends_on_subdirs(GaudiAlg FWCore Detector/DetInterface Detector/DetSegmentation Detector/DetCommon Reconstruction/RecInterface)
+gaudi_depends_on_subdirs(GaudiAlg FWCore Detector/DetInterface Detector/DetCommon Reconstruction/RecInterface)
 
 find_package(FastJet)
 find_package(ROOT COMPONENTS Physics)
 find_package(FCCEDM)
 find_package(PODIO)
 find_package(HepMC)
-find_package(DD4hep)
+find_package(DD4hep COMPONENTS DDSegmentation)
 find_package(Geant4)
 
 set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH}  ${DD4hep_ROOT}/cmake )
@@ -19,8 +20,10 @@ include( DD4hep )
 
 gaudi_add_module(RecCalorimeterPlugins
                  src/components/*.cpp
-                 INCLUDE_DIRS FastJet ROOT FWCore HepMC FCCEDM PODIO DD4hep DetInterface DetSegmentation Geant4 DetCommon RecInterface RecCalorimeter
-                 LINK_LIBRARIES Fastjet ROOT GaudiAlgLib FCCEDM PODIO HepMC DD4hep DetSegmentation Geant4 DetCommon)
+                 #INCLUDE_DIRS FastJet ROOT FWCore HepMC FCCEDM PODIO DD4hep DetInterface DetSegmentation Geant4 DetCommon RecInterface RecCalorimeter
+                 INCLUDE_DIRS FastJet ROOT FWCore HepMC FCCEDM PODIO DD4hep DetInterface Geant4 DetCommon RecInterface RecCalorimeter
+                 #LINK_LIBRARIES Fastjet ROOT GaudiAlgLib FCCEDM PODIO HepMC DD4hep DetSegmentation Geant4 DetCommon)
+                 LINK_LIBRARIES Fastjet ROOT GaudiAlgLib FCCEDM PODIO HepMC DD4hep Geant4 DetCommon)
 
 include(CTest)
 gaudi_add_test(genJetClustering

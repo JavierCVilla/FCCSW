@@ -96,10 +96,7 @@ StatusCode SimG4Svc::initialize() {
     m_regionTools.push_back(tool);
   }
   for (auto& tool : m_regionTools) {
-    if (tool->create().isFailure()) {
-      error() << "Unable to create regions for specified volumes" << endmsg;
-      return StatusCode::FAILURE;
-    }
+    tool->create();
   }
   for (auto command : m_g4PostInitCommands) {
     UImanager->ApplyCommand(command);

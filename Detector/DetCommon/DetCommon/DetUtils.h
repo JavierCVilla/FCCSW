@@ -2,12 +2,13 @@
 #define DETCOMMON_DETUTILS_H
 
 // FCCSW
-#include "DetSegmentation/FCCSWGridPhiEta.h"
+//#include "DDSegmentation/GridPhiEta.h"
 
 // DD4hep
 #include "DD4hep/DetFactoryHelper.h"
 #include "DD4hep/Segmentations.h"
-#include "DDSegmentation/BitField64.h"
+#include "DDSegmentation/BitFieldCoder.h"
+#include "DDSegmentation/GridPhiEta.h"
 #include "DDSegmentation/CartesianGridXY.h"
 #include "DDSegmentation/CartesianGridXYZ.h"
 #include "DDSegmentation/PolarGridRPhi.h"
@@ -49,7 +50,7 @@ uint64_t cellID(const dd4hep::Segmentation& aSeg, const G4Step& aStep, bool aPre
  *   @param[in] aCellId ID of cell.
  *   return Vector of neighbours.
  */
-std::vector<uint64_t> neighbours(dd4hep::DDSegmentation::BitField64& aDecoder,
+std::vector<uint64_t> neighbours(const dd4hep::DDSegmentation::BitFieldCoder& aDecoder,
                                  const std::vector<std::string>& aFieldNames,
                                  const std::vector<std::pair<int, int>>& aFieldExtremes,
                                  uint64_t aCellId);
@@ -59,7 +60,7 @@ std::vector<uint64_t> neighbours(dd4hep::DDSegmentation::BitField64& aDecoder,
  *   @param[in] aFieldNames Names of the fields for which extremes are found.
  *   return Vector of pairs (min,max)
  */
-std::vector<std::pair<int, int>> bitfieldExtremes(dd4hep::DDSegmentation::BitField64& aDecoder,
+std::vector<std::pair<int, int>> bitfieldExtremes(const dd4hep::DDSegmentation::BitFieldCoder& aDecoder,
                                                   const std::vector<std::string>& aFieldNames);
 
 /** Get the half widths of the box envelope (TGeoBBox).
@@ -125,7 +126,7 @@ std::array<uint, 3> numberOfCells(uint64_t aVolumeId, const dd4hep::DDSegmentati
  *   @param[in] aSeg Handle to the segmentation of the volume.
  *   return Array of the number of cells in (phi, eta) and the minimum eta ID.
  */
-std::array<uint, 3> numberOfCells(uint64_t aVolumeId, const dd4hep::DDSegmentation::FCCSWGridPhiEta& aSeg);
+std::array<uint, 3> numberOfCells(uint64_t aVolumeId, const dd4hep::DDSegmentation::GridPhiEta& aSeg);
 
 /** Get the number of cells for the volume and a given R-phi segmentation.
  *   It is assumed that the volume has a cylindrical shape - TGeoTube (and full azimuthal coverage)

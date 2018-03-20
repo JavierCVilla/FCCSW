@@ -42,7 +42,7 @@ StatusCode NoiseCaloCellsFromFileTool::initialize() {
     return StatusCode::FAILURE;
   }
   // Get PhiEta segmentation
-  m_segmentation = dynamic_cast<dd4hep::DDSegmentation::FCCSWGridPhiEta*>(
+  m_segmentation = dynamic_cast<dd4hep::DDSegmentation::GridPhiEta*>(
       m_geoSvc->lcdd()->readout(m_readoutName).segmentation().segmentation());
   if (m_segmentation == nullptr) {
     error() << "There is no phi-eta segmentation." << endmsg;
@@ -139,8 +139,9 @@ double NoiseCaloCellsFromFileTool::getNoiseConstantPerCell(int64_t aCellId) {
   double cellEta = m_segmentation->eta(aCellId);
   // Take readout, bitfield from GeoSvc
   auto decoder = m_geoSvc->lcdd()->readout(m_readoutName).idSpec().decoder();
-  decoder->setValue(aCellId);
-  unsigned cellLayer = (*decoder)[m_activeFieldName];
+  //decoder->setValue(aCellId);
+  long long cID = aCellId;
+  unsigned cellLayer = decoder->get(cID, m_activeFieldName);
 
   // All histograms have same binning, all bins with same size
   // Using the histogram in the first layer to get the bin size

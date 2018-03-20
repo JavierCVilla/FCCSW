@@ -52,29 +52,36 @@ uint64_t cellID(const dd4hep::Segmentation& aSeg, const G4Step& aStep, bool aPre
   return volID;
 }
 
-std::vector<uint64_t> neighbours(dd4hep::DDSegmentation::BitField64& aDecoder,
+std::vector<uint64_t> neighbours(const dd4hep::DDSegmentation::BitFieldCoder& aDecoder,
                                  const std::vector<std::string>& aFieldNames,
                                  const std::vector<std::pair<int, int>>& aFieldExtremes,
                                  uint64_t aCellId) {
   std::vector<uint64_t> neighbours;
-  aDecoder.setValue(aCellId);
+  //aDecoder.setValue(aCellId);
+  long long cID = aCellId;
   for (uint itField = 0; itField < aFieldNames.size(); itField++) {
     const auto& field = aFieldNames[itField];
-    int id = aDecoder[field];
+    //int id = aDecoder[field];
+    long long id = aDecoder.get(cID,field);
     if (id > aFieldExtremes[itField].first) {
-      aDecoder[field] = id - 1;
-      neighbours.emplace_back(aDecoder.getValue());
+      //aDecoder[field] = id - 1;
+      //neighbours.emplace_back(aDecoder.getValue());
+      aDecoder.set(cID,field,id - 1);
+      neighbours.emplace_back(cID);
     }
     if (id < aFieldExtremes[itField].second) {
-      aDecoder[field] = id + 1;
-      neighbours.emplace_back(aDecoder.getValue());
+      //aDecoder[field] = id + 1;
+      //neighbours.emplace_back(aDecoder.getValue());
+      aDecoder.set(cID,field,id + 1);
+      neighbours.emplace_back(cID);
     }
-    aDecoder[field] = id;
+    //aDecoder[field] = id;
+    aDecoder.set(cID, field, id);
   }
   return std::move(neighbours);
 }
 
-std::vector<std::pair<int, int>> bitfieldExtremes(dd4hep::DDSegmentation::BitField64& aDecoder,
+std::vector<std::pair<int, int>> bitfieldExtremes(const dd4hep::DDSegmentation::BitFieldCoder& aDecoder,
                                                   const std::vector<std::string>& aFieldNames) {
   std::vector<std::pair<int, int>> extremes;
   int width = 0;
@@ -223,7 +230,7 @@ std::array<double, 2> volumeEtaExtremes(uint64_t aVolumeId) {
   }
 }
 
-std::array<uint, 3> numberOfCells(uint64_t aVolumeId, const dd4hep::DDSegmentation::FCCSWGridPhiEta& aSeg) {
+std::array<uint, 3> numberOfCells(uint64_t aVolumeId, const dd4hep::DDSegmentation::GridPhiEta& aSeg) {
   // get segmentation number of bins in phi
   uint phiCellNumber = aSeg.phiBins();
   // get segmentation cell width in eta

@@ -87,23 +87,24 @@ StatusCode RedoSegmentation::execute() {
     fcc::CaloHit newHit = outHits->create();
     newHit.energy(hit.energy());
     newHit.time(hit.time());
-    m_oldDecoder->setValue(hit.cellId());
+    //m_oldDecoder->setValue(hit.cellId());
+    long long cellId = hit.cellId();
     if (debugIter < m_debugPrint) {
-      debug() << "OLD: " << m_oldDecoder->valueString() << endmsg;
+      debug() << "OLD: " << m_oldDecoder->valueString(cellId) << endmsg;
     }
     // factor 10 to convert mm to cm
     dd4hep::DDSegmentation::Vector3D position(hit.position().x / 10, hit.position().y / 10, hit.position().z / 10);
     // first calculate proper segmentation fields
-    uint64_t newcellId = m_segmentation->cellID(position, position, volumeID(hit.cellId()));
-    m_segmentation->decoder()->setValue(newcellId);
+    long long newCellId = m_segmentation->cellID(position, position, volumeID(hit.cellId()));
+    //m_segmentation->decoder()->setValue(newcellId);
     // now rewrite all other fields (detector ID)
     for (const auto& detectorField : m_detectorIdentifiers) {
-      oldid = (*m_oldDecoder)[detectorField];
-      (*m_segmentation->decoder())[detectorField] = oldid;
+      oldid = m_oldDecoder->get(cellId, detectorField);
+      m_segmentation->decoder()->set(newCellId, detectorField, oldid);
     }
-    newHit.cellId(m_segmentation->decoder()->getValue());
+    newHit.cellId(newCellId);
     if (debugIter < m_debugPrint) {
-      debug() << "NEW: " << m_segmentation->decoder()->valueString() << endmsg;
+      debug() << "NEW: " << m_segmentation->decoder()->valueString(newCellId) << endmsg;
       debugIter++;
     }
   }
@@ -115,9 +116,10 @@ StatusCode RedoSegmentation::finalize() {
    return GaudiAlgorithm::finalize(); }
 
 uint64_t RedoSegmentation::volumeID(uint64_t aCellId) const {
-  m_oldDecoder->setValue(aCellId);
+  //m_oldDecoder->setValue(aCellId);
+  long long cID = aCellId;
   for (const auto& identifier : m_oldIdentifiers) {
-    (*m_oldDecoder)[identifier] = 0;
+    m_oldDecoder->set(cID, identifier, 0);
   }
-  return m_oldDecoder->getValue();
+  return aCellId; //??
 }

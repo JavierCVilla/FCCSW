@@ -3,7 +3,7 @@
 // FCCSW
 #include "DetCommon/DetUtils.h"
 #include "DetInterface/IGeoSvc.h"
-#include "DetSegmentation/FCCSWGridPhiEta.h"
+//#include "DetSegmentation/FCCSWGridPhiEta.h"
 
 // datamodel
 #include "datamodel/CaloHitCollection.h"
@@ -43,13 +43,15 @@ StatusCode TestCellCounting::initialize() {
     error() << "Size of names and values is not the same" << endmsg;
     return StatusCode::FAILURE;
   }
+
+  long long cID = 0;
   for (uint it = 0; it < m_fieldNames.size(); it++) {
-    (*decoder)[m_fieldNames[it]] = m_fieldValues[it];
+      decoder->set(cID, m_fieldNames[it], m_fieldValues[it]);
   }
-  m_volumeId = decoder->getValue();
+  m_volumeId = cID;
 
   // count the segmentation cells for the volume
-  info() << "Counting cells for volume " << decoder->valueString() << " -> volume ID: " << m_volumeId << endmsg;
+  info() << "Counting cells for volume " << decoder->valueString(cID) << " -> volume ID: " << m_volumeId << endmsg;
   auto segmentationXY = dynamic_cast<dd4hep::DDSegmentation::CartesianGridXY*>(
       m_geoSvc->lcdd()->readout(m_readoutName).segmentation().segmentation());
   if (segmentationXY == nullptr) {
@@ -74,7 +76,7 @@ StatusCode TestCellCounting::initialize() {
     info() << "Number of segmentation cells in (r,phi): " << det::utils::numberOfCells(m_volumeId, *segmentationRPhi)
            << endmsg;
   }
-  auto segmentationPhiEta = dynamic_cast<dd4hep::DDSegmentation::FCCSWGridPhiEta*>(
+  auto segmentationPhiEta = dynamic_cast<dd4hep::DDSegmentation::GridPhiEta*>(
       m_geoSvc->lcdd()->readout(m_readoutName).segmentation().segmentation());
   if (segmentationPhiEta == nullptr) {
     info() << "There is no phi-eta segmentation." << endmsg;
